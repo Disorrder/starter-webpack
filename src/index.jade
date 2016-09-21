@@ -1,0 +1,23 @@
+doctype html 5
+html(ng-app="app")
+    head
+        meta(charset="utf-8")
+        meta(name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no")
+        meta(property="og:url" content="")
+        meta(property="og:title" content="")
+        meta(property="og:description" content="")
+        meta(property="og:image" content="")
+        link(rel="image_src" href="")
+        link(rel="shortcut icon" href="" type="image/x-icon")
+
+        title TASS_starter
+        each style in styles
+            link(rel="stylesheet", href=style)
+
+    body
+        div#viewport
+            div#main(ui-view="")
+                div.alert-success.text-center Загрузка...
+        
+        each script in scripts
+            script(src=script)
