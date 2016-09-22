@@ -3,8 +3,6 @@ cfg = require './config'
 fs = require 'fs'
 path = require 'path'
 gulp = require 'gulp'
-change = require 'gulp-change'
-concat = require 'gulp-concat'
 util = require 'gulp-util'
 webpack = require 'webpack-stream'
 webpackConfig = require '../webpack.config.js'
@@ -20,19 +18,16 @@ compile = (cb) ->
         scripts = scripts.join '\n'
 
         oldScripts = fs.readFileSync entryFile
-        
+
         if scripts != oldScripts.toString()
             fs.writeFileSync entryFile, scripts
 
+    getSources 'config.js' # TODO: into another task!
+        .pipe gulp.dest cfg.path.build
+
     getSources '**/*.entry.coffee'
-        # .pipe change (content) ->
-        #     importPath = @file.relative.replace(/\\/g, '/')
-        #     console.log 'ip', importPath
-        #     "require '#{importPath}'"
-        # .pipe concat 'app.entity.coffee'
         .pipe webpack webpackConfig
         .pipe gulp.dest path.join cfg.path.build, 'scripts'
-
 
 module.exports = compile
 module.exports.watch = path.join cfg.path.app, glob
