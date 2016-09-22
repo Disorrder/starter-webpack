@@ -17,7 +17,7 @@ compile = ->
         .pipe jsFilter
         .pipe wrap "/* --- <%= file.relative %> --- */\n<%= contents %>"
         .pipe concat 'scripts/vendor.js'
-        .pipe hash {format: '{name}-{hash:6}{ext}'}
+        .pipe runIfProd -> hash {format: '{name}-{hash:6}{ext}'}
         .pipe jsFilter.restore
         # Can't concat because of libs' assets (like fonts, images, etc.)
         # .pipe cssFilter

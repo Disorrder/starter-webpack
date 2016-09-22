@@ -1,13 +1,11 @@
 cfg = require '../config'
 _ = require 'lodash'
-glob = require 'glob'
+glob = require 'globby'
 
 class Build # another type of cache. PS: mb rename to Cache?
-    @getByGlob: (mask) =>
-        res = []
-        if not _.isArray mask then mask = [mask]
-        mask.forEach (v) ->
-            res = res.concat glob.sync v, {cwd: cfg.path.build, nosort: true}
+    @getByGlob: (mask, cwd = cfg.path.build) =>
+        if !_.isArray mask then mask = [mask]
+        res = glob.sync mask, {cwd, nosort: true}
         res = _.uniq res
         res.map (v) -> '/' + v
 

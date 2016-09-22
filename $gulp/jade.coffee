@@ -22,8 +22,9 @@ params =
     base: cfg.path.app
 index = () ->
     streams = merge()
+    # scriptsGlob = ['config.js', 'scripts/vendor.js', 'scripts/app.js', 'app/**/*.module.js', 'app/**/*.js']
 
-    scripts = files.getByGlob ['config*.js', 'scripts/vendor*.js', 'scripts/app*.js', 'app/**/*.module*.js', 'app/**/*.js']
+    scripts = files.getByGlob ['config*.js', 'scripts/vendor*.js', 'scripts/*.js', 'app/**/*.js']
     styles  = files.getByGlob ['styles/vendor*.css', 'bower_components/**/*.css', 'styles/app*.css', 'app/**/*.css']
 
     # --- .build/index-attachments.jade ---

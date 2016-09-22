@@ -10,14 +10,16 @@ html(ng-app="app")
         link(rel="image_src" href="")
         link(rel="shortcut icon" href="" type="image/x-icon")
 
-        title TASS_starter
+        title starter-webpack
+        
         each style in styles
             link(rel="stylesheet", href=style)
 
+        each script in scripts
+            script(src=script)
+            
     body
         div#viewport
             div#main(ui-view="")
                 div.alert-success.text-center Загрузка...
         
-        each script in scripts
-            script(src=script)
