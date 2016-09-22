@@ -18,9 +18,11 @@ compile = (cb) ->
         scripts = scripts.map (v) ->
             "require '.#{v}'"
         scripts = scripts.join '\n'
-        console.log 'scr', entryFile, '\n', scripts
-        q = fs.writeFileSync entryFile, scripts
-        console.log q
+
+        oldScripts = fs.readFileSync entryFile
+        
+        if scripts != oldScripts.toString()
+            fs.writeFileSync entryFile, scripts
 
     getSources '**/*.entry.coffee'
         # .pipe change (content) ->

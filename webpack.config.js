@@ -9,10 +9,14 @@ module.exports = {
     // context: cfg.path.app,
     debug: true,
     watch: false,
-    entry: `${cfg.path.app}app/app.entry.coffee`,
+    // entry: `${cfg.path.app}app/app.entry.coffee`,
+    entry: {
+        app: `${cfg.path.app}app/app.entry.coffee`
+    },
     output: {
         // path: path.join(cfg.path.build, 'scripts'),
-        filename: 'bundle.js'
+        filename: '[name].js',
+        library: '[name]'
     },
     resolve: {
         // Tell webpack to look for required files in bower and node
