@@ -10,17 +10,17 @@ files = require './lib/build'
 
 glob = '**/*.coffee'
 compile = (cb) ->
-    if webpackConfig.module.autoRequire
-        entryFile = path.join cfg.path.app, 'app/app.entry.coffee'
-        scripts = files.getByGlob [glob, '!**/*.entry.coffee' ], path.join cfg.path.app, 'app'
-        scripts = scripts.map (v) ->
-            "require '.#{v}'"
-        scripts = scripts.join '\n'
-
-        oldScripts = fs.readFileSync entryFile
-
-        if scripts != oldScripts.toString()
-            fs.writeFileSync entryFile, scripts
+    # if webpackConfig.module.autoRequire
+    #     entryFile = path.join cfg.path.app, 'app/app.entry.coffee'
+    #     scripts = files.getByGlob [glob, '!**/*.entry.coffee' ], path.join cfg.path.app, 'app'
+    #     scripts = scripts.map (v) ->
+    #         "require '.#{v}'"
+    #     scripts = scripts.join '\n'
+    #
+    #     oldScripts = fs.readFileSync entryFile
+    # 
+    #     if scripts != oldScripts.toString()
+    #         fs.writeFileSync entryFile, scripts
 
     getSources 'config.js' # TODO: into another task!
         .pipe gulp.dest cfg.path.build

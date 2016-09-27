@@ -4,7 +4,6 @@ var cfg = require('./$gulp/config');
 const path = require('path');
 const webpack = require('webpack');
 
-console.log('wp cfg', __dirname);
 module.exports = {
     // context: cfg.path.app,
     debug: true,
@@ -19,6 +18,7 @@ module.exports = {
         library: '[name]'
     },
     resolve: {
+        root: path.resolve(cfg.path.app),
         // Tell webpack to look for required files in bower and node
         modulesDirectories: ['bower_components', 'node_modules'],
         extensions: ['', '.js', '.coffee', '.json']
@@ -28,7 +28,6 @@ module.exports = {
         extensions: ['', '.js']
     },
     module: {
-        autoRequire: true, // custom option. See $gulp/webpack
         loaders: [
             //{ test: /\.js$/, loader: "babel-loader" },
             { test: /\.coffee$/, loader: "coffee-loader" },
