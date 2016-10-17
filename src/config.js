@@ -1,3 +1,3 @@
 window.config = {
-    api: 'http://192.168.25.114/gosduma-api/api'
+    api: 'http://192.168.25.114/api'
 }

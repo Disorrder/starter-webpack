@@ -8,8 +8,6 @@ path    = require 'path'
 gulp    = require 'gulp'
 webpack = require './$gulp/webpack'
 bower   = require './$gulp/bower'
-# coffee  = require './$gulp/coffee'
-# babel   = require './$gulp/babel'
 styl    = require './$gulp/stylus'
 jade    = require './$gulp/jade'
 assets  = require './$gulp/assets'
@@ -24,8 +22,6 @@ gulp.task 'clean', (cb) =>
 
 gulp.task 'webpack', webpack
 gulp.task 'bower', bower
-# gulp.task 'coffee', coffee
-# gulp.task 'babel', babel
 gulp.task 'styl', styl
 gulp.task 'jade', jade
 gulp.task 'jade.index', jade.index
@@ -34,8 +30,6 @@ gulp.task 'assets', assets
 gulp.task 'watch', ->
     gulp.watch webpack.watch,   gulp.series 'webpack', 'jade.index'
     gulp.watch bower.watch,  gulp.series 'bower', 'jade.index'
-    # gulp.watch coffee.watch, gulp.series 'coffee', 'jade.index'
-    # gulp.watch babel.watch,  gulp.series 'babel', 'jade.index'
     gulp.watch styl.watch,   gulp.series 'styl', 'jade.index'
     gulp.watch jade.watch,   gulp.series 'jade', 'jade.index'
     gulp.watch assets.watch, gulp.series 'assets'

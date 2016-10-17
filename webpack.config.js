@@ -5,12 +5,11 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-    // context: cfg.path.app,
+    context: cfg.path.app,
     debug: true,
     watch: false,
-    // entry: `${cfg.path.app}app/app.entry.coffee`,
     entry: {
-        app: `${cfg.path.app}app/app.entry.coffee`
+        app: `app/Application.entry.js`
     },
     output: {
         // path: path.join(cfg.path.build, 'scripts'),
@@ -29,15 +28,23 @@ module.exports = {
     },
     module: {
         loaders: [
-            //{ test: /\.js$/, loader: "babel-loader" },
+            { test: /\.js$/, loader: "babel-loader" },
             { test: /\.coffee$/, loader: "coffee-loader" },
             { test: /\.jade$/, loader: "jade-loader" }
-        ],
+        ].forEach((v) => {
+            v.exclude = [/node_modules/, /bower_components/];
+        }),
         noParse: /\.min\.js$/
     },
     plugins: [
         new webpack.ResolverPlugin(
             new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin(".bower.json", ["main"])
-        )
+        ),
+        // new webpack.ProvidePlugin({
+        //    $: 'jquery',
+        //    _: 'lodash',
+        //    angular: 'angular',
+        //    moment: 'moment'
+        // })
     ]
 }
