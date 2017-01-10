@@ -1,4 +1,4 @@
-cfg         = require '../gulpconfig.json' # think about detect work directory
+cfg         = require '../buildconfig.json' # think about detect work directory
 _           = require 'lodash'
 
 defaultCfg = {

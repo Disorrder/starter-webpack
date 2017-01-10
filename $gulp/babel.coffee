@@ -8,7 +8,7 @@ glob = '**/*.{js,es6}'
 compile = ->
     getSources glob
         .pipe babel
-            presets: ['es2015']
+            presets: ['es2015', 'stage-2']
         .on 'error', errorHndl
         .pipe gulp.dest cfg.path.build
 
