@@ -3,9 +3,8 @@ export function requireAll(requireContext) {  // auto require from project
     let exclude = ['/__'];
     let modules = requireContext.keys();
 
-    modules = _(modules)
+    return _(modules)
         .filter((v) => {
-            console.log('filter', v, !_.some(exclude, (x) => ~v.indexOf(x)));
             return !_.some(exclude, (x) => ~v.indexOf('/__'));
         })
         .map((v) => requireContext(v))
