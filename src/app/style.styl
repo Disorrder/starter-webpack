@@ -1,19 +1,40 @@
 body
-    // height: 100vh
+    min-height: 100vh
     background: #FAFAFA
-    font-family: Merriweather
-    color: #666
+    font-family: 'Ubuntu', sans-serif
+    color: white
+    font-size: 14px
 
-// #viewport
-//     min-height: 100%
+[ui-sref], [ng-click]
+    cursor: pointer
+
+[disabled]
+    cursor: not-allowed
 
 ul
     list-style: none
     padding-left: 0
 
+a
+    color: inherit
+    text-decoration: underline
+
+.ru-quotes
+    &:before
+        content: '“'
+    &:after
+        content: '”'
+
 .no-gutter > [class*="col-"], [class*="col-"].nopadding
     padding-left: 0 !important
     padding-right: 0 !important
+
+.space-l, .space-lr
+    &:before
+        content: ' '
+.space-r, .space-lr
+    &:after
+        content: ' '
 
 .vertical-center
     display table
@@ -26,3 +47,4 @@ ul
 .vertical-center-flex
     display: flex
     align-items: center
+    height: 100%

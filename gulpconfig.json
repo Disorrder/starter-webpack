@@ -1,7 +1,0 @@
-{
-    "webserver": {
-        "host": "localhost",
-        "port": 1000,
-        "fallback": true
-    }
-}

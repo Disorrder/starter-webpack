@@ -1,122 +1,160 @@
 'use strict';
-require('coffee-script/register'); //?
-var cfg = require('./$gulp/config');
 const os = require('os');
 const path = require('path');
 const webpack = require('webpack');
 
+var cfg = require('./buildconfig.json');
 const npm = require('./package.json');
-const bower = require('./bower.json');
+const pug = require('pug');
 
-// const CleanWebpackPlugin  = require('clean-webpack-plugin');
-const HtmlWebpackPlugin   = require('html-webpack-plugin');
-const SplitByPathPlugin   = require('webpack-split-by-path');
+const WebpackNotifierPlugin = require('webpack-notifier');
+const CleanWebpackPlugin  = require('clean-webpack-plugin');
 const CopyWebpackPlugin   = require('copy-webpack-plugin');
-const BowerWebpackPlugin = require("bower-webpack-plugin");
+const HtmlWebpackPlugin   = require('html-webpack-plugin');
+const OpenBrowserPlugin = require('open-browser-webpack-plugin');
+const SplitByPathPlugin = require('webpack-split-by-path');
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'development'
-
-var flags = {
-    watch: process.env.NODE_ENV == 'development',
-    sourcemaps: os.platform() != 'darwin' && process.env.NODE_ENV == 'development',
-    // sourcemaps: false
+function chunksSortOrder(chunks) {
+    return function(a, b) {
+        var i = chunks.indexOf(a.names[0]);
+        var j = chunks.indexOf(b.names[0]);
+        return i - j;
+    }
 }
 
-console.log(process.env.NODE_ENV, 'mode');
-console.log('flags', flags);
+// env variables
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+function isDev() { return process.env.NODE_ENV == 'development' }
+function isProd() { return process.env.NODE_ENV == 'production' }
+function isMac() { return os.platform() == 'darwin' }
+function isWin() { return os.platform() == 'win32' }
+
+var flags = {
+    watch: false,
+    // watch: isDev(),
+    clean: isProd(),
+    sourcemaps: isDev() && !isMac(),
+    notify: isDev(),
+}
+
+console.log('Builder is running in', process.env.NODE_ENV, 'mode.');
+// console.log('Flags:', flags);
 
 module.exports = {
     context: path.resolve(cfg.path.app),
-    debug: true,
     watch: flags.watch,
-    devtool: flags.sourcemaps ? "cheap-source-map" : null,
     entry: {
         app: `app/app.entry.js`,
-        vendor: Object.keys(npm.dependencies).concat(Object.keys(bower.dependencies))
     },
     output: {
-        // path: path.join(cfg.path.build, 'scripts'),
-        path: cfg.path.build,
+        path: path.resolve(__dirname, cfg.path.build),
         // publicPath: cfg.path.build,
         filename: '[name].js',
         library: '[name]'
     },
+    devtool: flags.sourcemaps ? "cheap-source-map" : false,
     devServer: {
-        port: cfg.port,
-        host: cfg.host,
+        port: cfg.webserver.port,
+        host: cfg.webserver.host,
         inline: true,
+        disableHostCheck: true,
         historyApiFallback: true,
+        contentBase: cfg.path.src,
         watchOptions: {
             aggregateTimeout: 300,
             poll: 1000
         },
-        // outputPath: cfg.path.build,
-        contentBase: cfg.path.src
+        stats: 'minimal',
     },
     resolve: {
-        root: path.resolve(cfg.path.app),
+        modules: [
+            path.join(__dirname, "src"),
+            "node_modules"
+        ],
         // Tell webpack to look for required files in bower and node
-        modulesDirectories: ['../bower_components', '../node_modules'],
-        extensions: ['', '.js', '.coffee', '.json']
+        // modulesDirectories: ['../bower_components', '../node_modules'],
+        // extensions: ['', '.js', '.coffee', '.json']
+        alias: {
+            vue: 'vue/dist/vue.js'
+        }
     },
-    resolveLoader: {
-        root: path.resolve('./node_modules'),
-        // modulesDirectories: ['node_modules'],
-        extensions: ['', '.js']
-    },
+    // resolveLoader: {
+    //     root: path.resolve('./node_modules'),
+    //     // modulesDirectories: ['node_modules'],
+    //     extensions: ['', '.js']
+    // },
     module: {
-        loaders: [
+        rules: [
             { test: /\.js$/, loader: "babel-loader", exclude: [/node_modules/, /bower_components/], query: { presets: ['es2015', 'stage-2'] } },
             // { test: /\.coffee$/, loader: "coffee-loader" },
             { test: /\.(pug|jade)$/, loader: "pug-loader" },
-            { test: /\.css$/,       loader: "style!css-loader"},
-            { test: /\.styl$/,      loader: "style!css-loader!stylus" },
-            { test: /\.font\.(js|json)$/, loader: "style!css!fontgen" },
-            { test: /\.(jpeg|jpg|png|gif)$/i, loader: "file-loader"},
-            { test: /\.(woff|svg|ttf|eot)([\?]?.*)$/, loader: "file-loader?name=[name].[ext]"},
+            { test: /\.css$/, use: ["style-loader", "css-loader"] },
+            { test: /\.styl$/, use: ["style-loader", "css-loader", "stylus-loader"] },
+            { test: /\.font\.(js|json)$/, use: ["style-loader", "css-loader", "fontgen-loader"] },
+            {
+                test: /\.(jpeg|jpg|png|gif|woff2?|svg|ttf|eot)$/i,
+                loader: "file-loader",
+                options: {
+                    name: "[path][name].[ext]"
+                }
+            },
+            // { test: /scene\.json$/, loader: "file-loader", options: {name: "[path][name].[ext]"} },
+            { test: /\.glsl$/, loader: "webpack-glsl-loader" }
         ],
         noParse: /\.min\.js$/
     },
     plugins: [
-        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
-        new webpack.ResolverPlugin(
-            new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin(".bower.json", ["main"])
-        ),
+        flags.notify ? new WebpackNotifierPlugin({excludeWarnings: true}) : new Function(),
+        flags.clean ? new CleanWebpackPlugin([cfg.path.build]) : new Function(),
+        new OpenBrowserPlugin({ url: `http://${cfg.webserver.hostname}:${cfg.webserver.port}` }),
+
+        new webpack.LoaderOptionsPlugin({
+            debug: true
+        }),
+
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            template: 'index.pug',
+            inject: 'head',
+            chunksSortMode: chunksSortOrder(['vendor', 'app']),
+        }),
+
+        // new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
+        // new webpack.ResolverPlugin(
+        //     new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin(".bower.json", ["main"])
+        // ),
+
         new webpack.DefinePlugin({
             'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
         }),
 
-        // new BowerWebpackPlugin({
-        //     excludes: /.*\.less/
-        // }),
-
         new CopyWebpackPlugin([
             { from: 'config.js' },
-            { from: 'assets/', to: 'assets/' },
-            { from: 'favicon.*', to: '[name].[ext]' }
+            { from: 'favicon.*' },
+            // { from: 'assets/', to: 'assets/' },
         ]),
 
-        // new SplitByPathPlugin([
-        //     {
-        //         name: 'vendor',
-        //         path: [
-        //             path.resolve('./node_modules'),
-        //             path.resolve('./bower_components')
-        //         ]
-        //     }
-        // ]),
-
-        new HtmlWebpackPlugin({
-            template: 'index.pug'
-        }),
-
+        new SplitByPathPlugin([
+            {
+                name: 'vendor',
+                path: [
+                    path.resolve('./node_modules'),
+                    path.resolve('./bower_components')
+                ]
+            }
+        ]),
 
         new webpack.ProvidePlugin({
            $: 'jquery',
            jQuery: 'jquery',
            _: 'lodash',
-           angular: 'angular',
-           moment: 'moment'
         })
     ]
+}
+
+if (cfg.api && cfg.api.active) {
+    if (!module.exports.devServer.proxy) module.exports.devServer.proxy = {};
+    Object.assign(module.exports.devServer.proxy, {
+        '/api/**': { target: `http://${cfg.api.host}:${cfg.api.port}`, secure: false }
+    });
 }

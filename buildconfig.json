@@ -1,7 +1,21 @@
 {
+    "path": {
+        "bower": "./",
+        "app": "./src/",
+        "build": "./.build/"
+    },
     "webserver": {
-        "host": "localhost",
-        "port": 1000,
+        "https": false,
+        "hostname": "localhost",
+        "host": "0.0.0.0",
+        "port": 8080,
         "fallback": true
+    },
+    "api": {
+        "active": false,
+        "https": false,
+        "hostname": "localhost",
+        "host": "0.0.0.0",
+        "port": 2000
     }
 }
