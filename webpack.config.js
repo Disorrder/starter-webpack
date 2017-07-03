@@ -71,21 +71,13 @@ module.exports = {
             path.join(__dirname, "src"),
             "node_modules"
         ],
-        // Tell webpack to look for required files in bower and node
-        // modulesDirectories: ['../bower_components', '../node_modules'],
-        // extensions: ['', '.js', '.coffee', '.json']
         alias: {
             vue: 'vue/dist/vue.js'
         }
     },
-    // resolveLoader: {
-    //     root: path.resolve('./node_modules'),
-    //     // modulesDirectories: ['node_modules'],
-    //     extensions: ['', '.js']
-    // },
     module: {
         rules: [
-            { test: /\.js$/, loader: "babel-loader", exclude: [/node_modules/, /bower_components/], query: { presets: ['es2015', 'stage-2'] } },
+            { test: /\.js$/, loader: "babel-loader", exclude: [/node_modules/], query: { presets: ['es2015', 'stage-2'] } },
             // { test: /\.coffee$/, loader: "coffee-loader" },
             { test: /\.(pug|jade)$/, loader: "pug-loader" },
             { test: /\.css$/, use: ["style-loader", "css-loader"] },
@@ -98,7 +90,6 @@ module.exports = {
                     name: "[path][name].[ext]"
                 }
             },
-            // { test: /scene\.json$/, loader: "file-loader", options: {name: "[path][name].[ext]"} },
             { test: /\.glsl$/, loader: "webpack-glsl-loader" }
         ],
         noParse: /\.min\.js$/
@@ -116,13 +107,8 @@ module.exports = {
             filename: 'index.html',
             template: 'index.pug',
             inject: 'head',
-            chunksSortMode: chunksSortOrder(['vendor', 'app']),
+            // chunksSortMode: chunksSortOrder(['vendor', 'app']),
         }),
-
-        // new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
-        // new webpack.ResolverPlugin(
-        //     new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin(".bower.json", ["main"])
-        // ),
 
         new webpack.DefinePlugin({
             'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
@@ -138,8 +124,7 @@ module.exports = {
             {
                 name: 'vendor',
                 path: [
-                    path.resolve('./node_modules'),
-                    path.resolve('./bower_components')
+                    path.resolve('./node_modules')
                 ]
             }
         ]),
