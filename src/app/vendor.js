@@ -4,6 +4,11 @@
 
 import $ from 'jquery';
 import _ from 'lodash';
+import AFRAME from 'aframe';
+import anime from 'animejs';
 
 window.$ = window.jQuery = $;
 window._ = _;
+window.AFRAME = AFRAME;
+window.THREE = THREE;
+window.anime = anime;

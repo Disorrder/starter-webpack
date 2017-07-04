@@ -22,4 +22,7 @@ html
     body
         div#viewport
             block body
-                div.alert-success.text-center Загрузка...
+                a-scene#scene(shadows="true" _stats="true")
+                    block scene
+                div#scene-ui
+                    block ui

@@ -105,7 +105,7 @@ module.exports = {
 
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            template: 'index.pug',
+            template: 'app/pages/main/template.pug',
             inject: 'head',
             // chunksSortMode: chunksSortOrder(['vendor', 'app']),
         }),
